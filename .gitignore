@@ -1,0 +1,38 @@
+# ── Heavy / private project data (never commit) ─────────────────────────
+# Real on-body participant recordings and the full working data tree
+data/real/
+**/raw/
+*.bin
+
+# Heavy intermediate outputs and model artefacts
+results_full/
+exports/
+*.pkl
+*.joblib
+*.h5
+*.onnx
+
+# Archives and superseded work
+_archive/
+**/plots_archive/
+
+# Final report (kept out of git by request)
+*report*.pdf
+final_report_latex/
+final_report_markdown/
+
+# ── Environments / caches ───────────────────────────────────────────────
+.venv*/
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# ── OS / editor cruft ───────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+~$*            # Word/Excel lock files
+*.tmp
+
+# NOTE: 04_data/synthetic_phase1/ IS committed on purpose — it is the
+# Phase I evidence and the largest single file is ~21 MB (under GitHub's limit).

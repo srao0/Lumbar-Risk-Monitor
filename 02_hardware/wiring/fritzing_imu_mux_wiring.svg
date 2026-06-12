@@ -1,0 +1,194 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1120" viewBox="0 0 1800 1120">
+  <defs>
+    <style>
+      .bg{fill:#f7f8fb}
+      .board{stroke-width:3;rx:14}
+      .feather{fill:#15508f;stroke:#0c3159}
+      .mux{fill:#17845f;stroke:#0b5239}
+      .imu{fill:#7951a3;stroke:#4d3367}
+      .pc,.railbox,.note{fill:#fff;stroke:#c8d0da;stroke-width:2;rx:10}
+      .pin{fill:#e8c66a;stroke:#80651c;stroke-width:1.4}
+      .usb{fill:#333b45;stroke:#111820;stroke-width:2;rx:6}
+      .wire{fill:none;stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+      .thin{stroke-width:3.2}
+      .pwr{stroke:#d92323}
+      .gnd{stroke:#111}
+      .sda{stroke:#f08a24}
+      .scl{stroke:#2ba84a}
+      .ch6{stroke:#8a4fff}
+      .ch3{stroke:#00a7b5}
+      .ch4{stroke:#cc3f82}
+      .ch5{stroke:#e1a500}
+      text{font-family:Arial,Helvetica,sans-serif;fill:#17212b}
+      .title{font-size:32px;font-weight:700}
+      .label{font-size:20px}
+      .small{font-size:16px}
+      .tiny{font-size:14px}
+      .white{fill:#fff;font-weight:700}
+      .whiteSmall{fill:#fff;font-size:15px}
+    </style>
+  </defs>
+
+  <rect class="bg" width="1800" height="1120"/>
+  <text class="title" x="60" y="56">ESP32-S3 Feather, TCA9548A and 4x MPU-6050 Wiring</text>
+  <text class="small" x="60" y="86">USB -> Feather -> I2C GPIO3/4 -> TCA9548A 0x70 -> channels 6, 3, 4, 5 -> MPU-6050 boards @0x68</text>
+
+  <!-- Independent power rails -->
+  <rect class="railbox" x="90" y="930" width="1590" height="130"/>
+  <text class="small" x="116" y="958">Breadboard rails: independent 3V3 and GND buses, all powered from the Feather 3V3 regulator</text>
+  <line class="wire pwr" x1="150" y1="998" x2="1635" y2="998"/>
+  <line class="wire gnd" x1="150" y1="1042" x2="1635" y2="1042"/>
+  <text class="label" x="1650" y="1005" fill="#d92323">+ 3V3</text>
+  <text class="label" x="1650" y="1049">- GND</text>
+
+  <!-- Host and Feather -->
+  <rect class="pc" x="55" y="230" width="145" height="115"/>
+  <text class="label" x="80" y="267">Host PC</text>
+  <text class="tiny" x="78" y="292">USB-CDC logging</text>
+  <text class="tiny" x="78" y="312">and 5 V power</text>
+  <path class="wire thin" d="M200 288 C245 288 274 288 318 288" stroke="#59616d"/>
+
+  <rect class="board feather" x="320" y="145" width="310" height="610"/>
+  <rect class="usb" x="318" y="260" width="44" height="58"/>
+  <text class="white" x="370" y="190">ESP32-S3 Feather</text>
+  <text class="whiteSmall" x="420" y="215">(Adafruit)</text>
+  <text class="whiteSmall" x="372" y="294">USB-C</text>
+  <circle class="pin" cx="600" cy="295" r="8"/><text class="whiteSmall" x="448" y="301">SDA GPIO3</text>
+  <circle class="pin" cx="600" cy="345" r="8"/><text class="whiteSmall" x="448" y="351">SCL GPIO4</text>
+  <circle class="pin" cx="600" cy="470" r="8"/><text class="whiteSmall" x="510" y="476">3V3</text>
+  <circle class="pin" cx="600" cy="520" r="8"/><text class="whiteSmall" x="510" y="526">GND</text>
+  <circle class="pin" cx="600" cy="575" r="8"/><text class="whiteSmall" x="512" y="581">BAT</text>
+  <text class="tiny" x="430" y="610" fill="#fff">BAT: not connected</text>
+
+  <!-- Feather USB cable enters the USB-C connector -->
+  <path class="wire thin" d="M318 288 L362 288" stroke="#59616d"/>
+
+  <!-- TCA9548A -->
+  <rect class="board mux" x="760" y="118" width="340" height="720"/>
+  <text class="white" x="800" y="160">TCA9548A I2C Mux</text>
+  <text class="whiteSmall" x="875" y="185">address 0x70</text>
+
+  <circle class="pin" cx="790" cy="255" r="7"/><text class="whiteSmall" x="810" y="260">SDA upstream</text>
+  <circle class="pin" cx="790" cy="305" r="7"/><text class="whiteSmall" x="810" y="310">SCL upstream</text>
+  <circle class="pin" cx="790" cy="405" r="7"/><text class="whiteSmall" x="810" y="410">VIN</text>
+  <circle class="pin" cx="790" cy="455" r="7"/><text class="whiteSmall" x="810" y="460">GND</text>
+  <circle class="pin" cx="790" cy="540" r="7"/><text class="whiteSmall" x="810" y="545">A0</text>
+  <circle class="pin" cx="790" cy="575" r="7"/><text class="whiteSmall" x="810" y="580">A1</text>
+  <circle class="pin" cx="790" cy="610" r="7"/><text class="whiteSmall" x="810" y="615">A2</text>
+  <circle class="pin" cx="790" cy="685" r="7"/><text class="whiteSmall" x="810" y="690">RESET</text>
+
+  <!-- Correct downstream pin pairs. SDn is SDA; SCn is SCL. -->
+  <circle class="pin" cx="1070" cy="235" r="7"/><text class="whiteSmall" x="988" y="240">SD6 SDA</text>
+  <circle class="pin" cx="1070" cy="270" r="7"/><text class="whiteSmall" x="988" y="275">SC6 SCL</text>
+  <circle class="pin" cx="1070" cy="360" r="7"/><text class="whiteSmall" x="988" y="365">SD3 SDA</text>
+  <circle class="pin" cx="1070" cy="395" r="7"/><text class="whiteSmall" x="988" y="400">SC3 SCL</text>
+  <circle class="pin" cx="1070" cy="505" r="7"/><text class="whiteSmall" x="988" y="510">SD4 SDA</text>
+  <circle class="pin" cx="1070" cy="540" r="7"/><text class="whiteSmall" x="988" y="545">SC4 SCL</text>
+  <circle class="pin" cx="1070" cy="650" r="7"/><text class="whiteSmall" x="988" y="655">SD5 SDA</text>
+  <circle class="pin" cx="1070" cy="685" r="7"/><text class="whiteSmall" x="988" y="690">SC5 SCL</text>
+
+  <!-- Upstream I2C and mux power/config -->
+  <path class="wire sda" d="M600 295 C690 295 705 255 790 255"/>
+  <path class="wire scl" d="M600 345 C690 345 705 305 790 305"/>
+  <text class="small" x="626" y="272" fill="#a84f08">SDA GPIO3 -> mux SDA</text>
+  <text class="small" x="626" y="374" fill="#1d7634">SCL GPIO4 -> mux SCL</text>
+
+  <path class="wire pwr" d="M600 470 C650 470 650 998 250 998"/>
+  <path class="wire gnd" d="M600 520 C680 520 680 1042 250 1042"/>
+  <path class="wire pwr" d="M790 405 C720 405 720 998 625 998"/>
+  <path class="wire gnd" d="M790 455 C740 455 740 1042 625 1042"/>
+  <path class="wire thin gnd" d="M790 540 C720 540 720 1042 760 1042"/>
+  <path class="wire thin gnd" d="M790 575 C735 575 735 1042 790 1042"/>
+  <path class="wire thin gnd" d="M790 610 C750 610 750 1042 820 1042"/>
+  <path class="wire thin pwr" d="M790 685 C705 685 705 998 825 998"/>
+  <rect class="note" x="540" y="640" width="190" height="82"/>
+  <text class="tiny" x="558" y="666">A0/A1/A2 -> GND</text>
+  <text class="tiny" x="585" y="688">sets 0x70</text>
+  <text class="tiny" x="575" y="710">RESET -> 3V3</text>
+
+  <!-- IMU helper symbol -->
+  <g id="imu-pelvis">
+    <rect class="board imu" x="1280" y="105" width="360" height="165"/>
+    <text class="white" x="1330" y="140">MPU-6050 @0x68</text>
+    <text class="whiteSmall" x="1352" y="164">Pelvis, channel 6</text>
+    <circle class="pin" cx="1308" cy="205" r="7"/><text class="whiteSmall" x="1324" y="210">SDA</text>
+    <circle class="pin" cx="1308" cy="238" r="7"/><text class="whiteSmall" x="1324" y="243">SCL</text>
+    <circle class="pin" cx="1578" cy="178" r="7"/><text class="whiteSmall" x="1498" y="183">VCC</text>
+    <circle class="pin" cx="1578" cy="211" r="7"/><text class="whiteSmall" x="1494" y="216">GND</text>
+    <circle class="pin" cx="1578" cy="244" r="7"/><text class="whiteSmall" x="1498" y="249">AD0</text>
+    <circle class="pin" cx="1308" cy="172" r="7"/><text class="whiteSmall" x="1324" y="177">INT NC</text>
+  </g>
+  <g id="imu-l3">
+    <rect class="board imu" x="1280" y="320" width="360" height="165"/>
+    <text class="white" x="1330" y="355">MPU-6050 @0x68</text>
+    <text class="whiteSmall" x="1366" y="379">L3, channel 3</text>
+    <circle class="pin" cx="1308" cy="420" r="7"/><text class="whiteSmall" x="1324" y="425">SDA</text>
+    <circle class="pin" cx="1308" cy="453" r="7"/><text class="whiteSmall" x="1324" y="458">SCL</text>
+    <circle class="pin" cx="1578" cy="393" r="7"/><text class="whiteSmall" x="1498" y="398">VCC</text>
+    <circle class="pin" cx="1578" cy="426" r="7"/><text class="whiteSmall" x="1494" y="431">GND</text>
+    <circle class="pin" cx="1578" cy="459" r="7"/><text class="whiteSmall" x="1498" y="464">AD0</text>
+    <circle class="pin" cx="1308" cy="387" r="7"/><text class="whiteSmall" x="1324" y="392">INT NC</text>
+  </g>
+  <g id="imu-t12">
+    <rect class="board imu" x="1280" y="535" width="360" height="165"/>
+    <text class="white" x="1330" y="570">MPU-6050 @0x68</text>
+    <text class="whiteSmall" x="1344" y="594">T12-L1, channel 4</text>
+    <circle class="pin" cx="1308" cy="635" r="7"/><text class="whiteSmall" x="1324" y="640">SDA</text>
+    <circle class="pin" cx="1308" cy="668" r="7"/><text class="whiteSmall" x="1324" y="673">SCL</text>
+    <circle class="pin" cx="1578" cy="608" r="7"/><text class="whiteSmall" x="1498" y="613">VCC</text>
+    <circle class="pin" cx="1578" cy="641" r="7"/><text class="whiteSmall" x="1494" y="646">GND</text>
+    <circle class="pin" cx="1578" cy="674" r="7"/><text class="whiteSmall" x="1498" y="679">AD0</text>
+    <circle class="pin" cx="1308" cy="602" r="7"/><text class="whiteSmall" x="1324" y="607">INT NC</text>
+  </g>
+  <g id="imu-t4">
+    <rect class="board imu" x="1280" y="750" width="360" height="165"/>
+    <text class="white" x="1330" y="785">MPU-6050 @0x68</text>
+    <text class="whiteSmall" x="1350" y="809">T4-T6, channel 5</text>
+    <circle class="pin" cx="1308" cy="850" r="7"/><text class="whiteSmall" x="1324" y="855">SDA</text>
+    <circle class="pin" cx="1308" cy="883" r="7"/><text class="whiteSmall" x="1324" y="888">SCL</text>
+    <circle class="pin" cx="1578" cy="823" r="7"/><text class="whiteSmall" x="1498" y="828">VCC</text>
+    <circle class="pin" cx="1578" cy="856" r="7"/><text class="whiteSmall" x="1494" y="861">GND</text>
+    <circle class="pin" cx="1578" cy="889" r="7"/><text class="whiteSmall" x="1498" y="894">AD0</text>
+    <circle class="pin" cx="1308" cy="817" r="7"/><text class="whiteSmall" x="1324" y="822">INT NC</text>
+  </g>
+
+  <!-- Downstream I2C buses, explicitly SD=SDA and SC=SCL -->
+  <path class="wire ch6" d="M1070 235 C1155 235 1210 205 1308 205"/>
+  <path class="wire ch6" d="M1070 270 C1155 270 1210 238 1308 238"/>
+  <text class="tiny" x="1110" y="218" fill="#5b31b8">ch6: SD6->SDA, SC6->SCL</text>
+  <path class="wire ch3" d="M1070 360 C1160 360 1210 420 1308 420"/>
+  <path class="wire ch3" d="M1070 395 C1160 395 1210 453 1308 453"/>
+  <text class="tiny" x="1110" y="350" fill="#006d76">ch3: SD3->SDA, SC3->SCL</text>
+  <path class="wire ch4" d="M1070 505 C1160 505 1210 635 1308 635"/>
+  <path class="wire ch4" d="M1070 540 C1160 540 1210 668 1308 668"/>
+  <text class="tiny" x="1110" y="500" fill="#8b2858">ch4: SD4->SDA, SC4->SCL</text>
+  <path class="wire ch5" d="M1070 650 C1160 650 1210 850 1308 850"/>
+  <path class="wire ch5" d="M1070 685 C1160 685 1210 883 1308 883"/>
+  <text class="tiny" x="1110" y="716" fill="#9a7100">ch5: SD5->SDA, SC5->SCL</text>
+
+  <!-- IMU power: separate red VCC and black GND drops. No bottom joining of rails. -->
+  <path class="wire pwr" d="M1578 178 L1660 178 L1660 998"/>
+  <path class="wire gnd" d="M1578 211 L1685 211 L1685 1042"/>
+  <path class="wire thin gnd" d="M1578 244 L1710 244 L1710 1042"/>
+
+  <path class="wire pwr" d="M1578 393 L1640 393 L1640 998"/>
+  <path class="wire gnd" d="M1578 426 L1665 426 L1665 1042"/>
+  <path class="wire thin gnd" d="M1578 459 L1690 459 L1690 1042"/>
+
+  <path class="wire pwr" d="M1578 608 L1620 608 L1620 998"/>
+  <path class="wire gnd" d="M1578 641 L1645 641 L1645 1042"/>
+  <path class="wire thin gnd" d="M1578 674 L1670 674 L1670 1042"/>
+
+  <path class="wire pwr" d="M1578 823 L1600 823 L1600 998"/>
+  <path class="wire gnd" d="M1578 856 L1625 856 L1625 1042"/>
+  <path class="wire thin gnd" d="M1578 889 L1650 889 L1650 1042"/>
+
+  <text class="tiny" x="1415" y="287">AD0 -> GND on each IMU; INT is not connected</text>
+  <text class="tiny" x="1415" y="502">AD0 -> GND on each IMU; INT is not connected</text>
+  <text class="tiny" x="1415" y="717">AD0 -> GND on each IMU; INT is not connected</text>
+  <text class="tiny" x="1415" y="932">AD0 -> GND on each IMU; INT is not connected</text>
+
+  <rect class="note" x="1020" y="930" width="460" height="76"/>
+  <text class="tiny" x="1040" y="957">No external pull-up resistors are shown.</text>
+  <text class="tiny" x="1040" y="979">TCA9548A and GY-521 breakouts already include SDA/SCL pull-ups.</text>
+</svg>

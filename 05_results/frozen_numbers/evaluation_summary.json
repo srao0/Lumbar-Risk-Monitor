@@ -1,0 +1,85 @@
+{
+  "primary": {
+    "tag": "primary",
+    "dataset": "results\\fallback_analysis_sets_n9_corrected_qc\\primary_4imu_cleaned_features.csv",
+    "features": [
+      "imu_trunk_angle_peak",
+      "imu_trunk_angle_mean",
+      "imu_angvel_peak",
+      "imu_angvel_mean",
+      "imu_time_in_risk_zone",
+      "imu_time_high_velocity",
+      "imu_ldlj",
+      "imu_jerk_rms",
+      "imu_jerk_peak",
+      "imu_ldlj_multiaxis",
+      "imu_compensation_index",
+      "imu_lumbopelv_ratio",
+      "imu_pelvis_angle_peak",
+      "imu_pelvis_angle_mean",
+      "imu_z_flex",
+      "imu_z_vel",
+      "imu_z_ldlj"
+    ],
+    "within_path": "results\\fallback_analysis_sets_n9_corrected_qc\\evaluation\\primary_within.csv",
+    "loso_path": "results\\fallback_analysis_sets_n9_corrected_qc\\evaluation\\primary_loso.csv",
+    "within_mean_auc": 0.7550105981234921,
+    "within_std_auc": 0.07707297177981473,
+    "loso_mean_auc": 0.5698290495535526,
+    "loso_std_auc": 0.09029900346850286
+  },
+  "reduced": {
+    "tag": "reduced",
+    "dataset": "results\\fallback_analysis_sets_n9_corrected_qc\\reduced_pelvis_l3_features.csv",
+    "features": [
+      "imu_angvel_peak",
+      "imu_angvel_mean",
+      "imu_time_high_velocity",
+      "imu_ldlj",
+      "imu_jerk_rms",
+      "imu_jerk_peak",
+      "imu_pelvis_angle_peak",
+      "imu_pelvis_angle_mean",
+      "imu_l3_accel_tilt_peak",
+      "imu_l3_accel_tilt_mean",
+      "imu_l3_accel_tilt_range",
+      "imu_z_vel",
+      "imu_z_ldlj"
+    ],
+    "within_path": "results\\fallback_analysis_sets_n9_corrected_qc\\evaluation\\reduced_within.csv",
+    "loso_path": "results\\fallback_analysis_sets_n9_corrected_qc\\evaluation\\reduced_loso.csv",
+    "within_mean_auc": 0.8188004576787237,
+    "within_std_auc": 0.08691979285623888,
+    "loso_mean_auc": 0.6407926853467135,
+    "loso_std_auc": 0.06178815404541237
+  },
+  "wilcoxon": {
+    "shared": [
+      "participant_01",
+      "participant_04",
+      "participant_05",
+      "participant_06",
+      "participant_07",
+      "participant_08"
+    ],
+    "primary_auc": [
+      0.559592887951097,
+      0.5679808751318005,
+      0.6516269507522661,
+      0.6751103813172779,
+      0.5438730218850237,
+      0.4207901802838512
+    ],
+    "reduced_auc": [
+      0.6420880943269003,
+      0.6742044134727062,
+      0.5897641249661636,
+      0.746986678329962,
+      0.6158627954596565,
+      0.6452602350510139
+    ],
+    "two_sided_p": 0.0625,
+    "n_eff": 6,
+    "min_possible_p": 0.03125
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "q1": {
+    "mean_imu": 0.7904102019962256,
+    "mean_hyb": 0.83870713967727,
+    "mean_delta": 0.04829693768104461,
+    "wins": "11/13",
+    "wilcoxon_p": 0.006103515625,
+    "pooled_imu": 0.7936555313634636,
+    "pooled_hyb": 0.8339991108213687,
+    "emg_importance_share": 0.3463313541297451,
+    "gain_vs_strength_rho": -0.12087912087912088,
+    "gain_vs_strength_p": 0.6940473279966857
+  },
+  "q2a": {
+    "within_mean": 0.8188004576787237,
+    "loso_mean": 0.6407926853467135,
+    "delta": 0.1780077723320101,
+    "wins": "9/9",
+    "wilcoxon_p": 0.00390625
+  },
+  "q2b": {
+    "pop_pooled": 0.6943732987642035,
+    "pers_pooled": 0.7782436100863411,
+    "delta_mean_persession": 0.03957986006992064,
+    "wins": "8/13",
+    "wilcoxon_p": 0.305419921875
+  },
+  "decomposition": [
+    {
+      "subset": "all_windows",
+      "n": 19342,
+      "imu": 0.7936555313634636,
+      "hyb": 0.8339991108213687,
+      "delta": 0.04034357945790512
+    },
+    {
+      "subset": "exclude_baseline",
+      "n": 16315,
+      "imu": 0.7565232930387644,
+      "hyb": 0.7876893450665631,
+      "delta": 0.031166052027798652
+    },
+    {
+      "subset": "hard_subset",
+      "n": 11553,
+      "imu": 0.6830030823845711,
+      "hyb": 0.6990574203394151,
+      "delta": 0.01605433795484401
+    }
+  ],
+  "confusable_pairs": [
+    {
+      "decision": "Fatigued vs clean flexion",
+      "imu": 0.7798691355052693,
+      "hyb": 0.7775409467001908,
+      "delta": -0.002328188805078457
+    },
+    {
+      "decision": "Fast vs clean flexion",
+      "imu": 0.6589689002125092,
+      "hyb": 0.6645989583034462,
+      "delta": 0.0056300580909369735
+    },
+    {
+      "decision": "Shoulder-driven vs clean flexion",
+      "imu": 0.7093423959193665,
+      "hyb": 0.7274159934740083,
+      "delta": 0.018073597554641774
+    },
+    {
+      "decision": "Asymmetric vs symmetric pickup",
+      "imu": 0.6683174069974085,
+      "hyb": 0.7172795443074482,
+      "delta": 0.04896213731003973
+    },
+    {
+      "decision": "Lumbar-dominant vs clean flexion",
+      "imu": 0.7291685504307236,
+      "hyb": 0.7215053154439506,
+      "delta": -0.007663234986773015
+    }
+  ],
+  "imu_n_features": 19,
+  "emg_n_features": 18
+}

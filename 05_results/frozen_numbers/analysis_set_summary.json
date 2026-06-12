@@ -1,0 +1,78 @@
+{
+  "primary": {
+    "rows": 8698,
+    "safe": 5174,
+    "risky": 3524,
+    "participants": [
+      "participant_01",
+      "participant_04",
+      "participant_05",
+      "participant_06",
+      "participant_07",
+      "participant_08"
+    ],
+    "per_participant": {
+      "participant_01": 1501,
+      "participant_04": 1450,
+      "participant_05": 1486,
+      "participant_06": 1501,
+      "participant_07": 1356,
+      "participant_08": 1404
+    }
+  },
+  "reduced": {
+    "rows": 13228,
+    "safe": 7891,
+    "risky": 5337,
+    "participants": [
+      "participant_01",
+      "participant_02",
+      "participant_03",
+      "participant_04",
+      "participant_05",
+      "participant_06",
+      "participant_07",
+      "participant_08",
+      "participant_09"
+    ],
+    "per_participant": {
+      "participant_01": 1501,
+      "participant_02": 1501,
+      "participant_03": 1501,
+      "participant_04": 1450,
+      "participant_05": 1486,
+      "participant_06": 1501,
+      "participant_07": 1356,
+      "participant_08": 1404,
+      "participant_09": 1528
+    }
+  },
+  "primary_pelvis_cap": {
+    "imu_pelvis_angle_peak": {
+      "n_capped": 297,
+      "pct": 3.415
+    },
+    "imu_pelvis_angle_mean": {
+      "n_capped": 50,
+      "pct": 0.575
+    }
+  },
+  "reduced_pelvis_cap": {
+    "imu_pelvis_angle_peak": {
+      "n_capped": 449,
+      "pct": 3.394
+    },
+    "imu_pelvis_angle_mean": {
+      "n_capped": 102,
+      "pct": 0.771
+    }
+  },
+  "sha256": {
+    "primary": "adc8defb4389038aaee31c063d2cc6d2fae5ea9c32e3a9ed90137b76517adc0b",
+    "reduced": "c592d5b2431e6da448a70c3bf7b937db5287669b5ae20634ec6eae9929ca79fd"
+  },
+  "n_cols": {
+    "primary": 51,
+    "reduced": 19
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "session_id": 5,
+  "seed": 46,
+  "participant_scale": 1.1217,
+  "imu_samples": 51410,
+  "emg_samples": 102820,
+  "duration_s": 636.7,
+  "config": {
+    "imu_fs": 100,
+    "emg_fs": 200,
+    "imu_noise_std": 0.5,
+    "imu_drift_rate": 0.02,
+    "emg_base_noise": 0.005,
+    "emg_motion_art": 0.03,
+    "inter_rep_jitter": 0.1,
+    "participant_var": 0.15
+  }
+}

@@ -1,0 +1,23 @@
+# Spinal Movement Risk Monitor — FYP 2025/26
+# Install: py -m pip install -r requirements.txt
+
+# Data acquisition
+brainflow==5.20.1          # OpenBCI Ganglion/Cyton streaming
+pyserial>=3.5              # Arduino IMU serial recording (breadboard + PCB, cabled)
+bleak>=0.21                # Wireless IMU recording from the PCB over BLE
+
+# Signal processing and ML
+numpy>=1.24
+scipy>=1.10
+scikit-learn==1.8.0
+joblib==1.5.3              # Model serialisation (required by scikit-learn)
+
+# Data handling
+pandas>=2.0
+
+# Visualisation
+matplotlib>=3.7
+
+# Notebooks
+jupyter>=1.0
+ipykernel>=6.0

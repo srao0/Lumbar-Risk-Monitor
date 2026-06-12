@@ -1,0 +1,26 @@
+{
+  "source_data_directory": "C:\\Users\\sudik\\OneDrive\\ACADEMIC\\Year_4_EEE\\FYP_Spine_Project\\data\\synthetic",
+  "session_folders_included": [
+    "session_0001",
+    "session_0002",
+    "session_0003",
+    "session_0004",
+    "session_0005"
+  ],
+  "participant_ids": [
+    "session_0001",
+    "session_0002",
+    "session_0003",
+    "session_0004",
+    "session_0005"
+  ],
+  "session_count": 5,
+  "participant_count": 5,
+  "label_source": "protocol",
+  "phase": "Phase I",
+  "operating_mode": "full_hybrid",
+  "feature_file_path": "C:\\Users\\sudik\\OneDrive\\ACADEMIC\\Year_4_EEE\\FYP_Spine_Project\\data\\synthetic\\combined_features.csv",
+  "feature_file_hash_sha256": "22dde89fb617eff5c659bc95208a8c3cffc550cf6322e82790f7a6dc306096af",
+  "generation_timestamp": "2026-05-24T15:48:43.124937+00:00",
+  "command_used": "C:\\Users\\sudik\\OneDrive\\ACADEMIC\\Year_4_EEE\\FYP_Spine_Project\\signal_processing\\pipeline.py --data_dir data/synthetic --label_source protocol"
+}

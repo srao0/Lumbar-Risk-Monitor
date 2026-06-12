@@ -1,0 +1,165 @@
+{
+  "frozen_at_utc": "2026-06-11T15:50:46.840394+00:00",
+  "purpose": "Frozen QC-cleaned drift-corrected n=9 evidence package (Phase II.A IMU-only fallback) for FYP Chapter 8 \u2014 CANONICAL.",
+  "supersedes": "results/fallback_analysis_sets_n9_corrected/FROZEN_MANIFEST.json (intermediate; re-admitted QC-excluded P04/P05/P07 windows).",
+  "correction": "Rest-anchor drift correction (apply_rest_anchor_correction.py) applied cohort-wide; then frozen participant-level QC exclusions re-applied (reapply_qc_exclusions_corrected.py): P04 -51 (T4 dropout), P05 -15, P07 -145 (FATIGUE_FLEXION pelvis belt slip).",
+  "policy": [
+    "All thesis numerical claims must reference a SHA-256 entry in this manifest.",
+    "Re-running the corrected+QC pipeline with seed=42 reproduces evaluation_summary.json.",
+    "If any feature CSV is regenerated, this manifest is invalidated and a re-freeze is required.",
+    "Do not edit in place; bump frozen_at_utc and keep prior manifests as dated snapshots."
+  ],
+  "evaluator_seed": 42,
+  "headline_auc": {
+    "primary_within_mean_auc": 0.7550105981234921,
+    "primary_loso_mean_auc": 0.5698290495535526,
+    "reduced_within_mean_auc": 0.8188004576787237,
+    "reduced_loso_mean_auc": 0.6407926853467135,
+    "wilcoxon_two_sided_p": 0.0625,
+    "wilcoxon_n_eff": 6
+  },
+  "sklearn_version": "1.8.0",
+  "joblib_version": "1.5.3",
+  "alignment_decision": "Option B: primary 17 feats; reduced 13 feats; RF n_estimators=500, min_samples_leaf=3, class_weight=balanced, random_state=42.",
+  "files": [
+    {
+      "path": "results\\fallback_analysis_sets_n9_corrected_qc\\primary_4imu_cleaned_features.csv",
+      "size_bytes": 5413612,
+      "sha256": "082156f5e546b74eccced77d52dad3d3330065e2a3b8a01297e92fff3940f22c",
+      "mtime_utc": "2026-06-11T15:23:23.284546+00:00",
+      "n_rows": 8698,
+      "n_cols": 51,
+      "participants": [
+        "participant_01",
+        "participant_04",
+        "participant_05",
+        "participant_06",
+        "participant_07",
+        "participant_08"
+      ],
+      "risk_class_counts": {
+        "0": 5174,
+        "1": 3524
+      }
+    },
+    {
+      "path": "results\\fallback_analysis_sets_n9_corrected_qc\\reduced_pelvis_l3_features.csv",
+      "size_bytes": 3900490,
+      "sha256": "672bb0b248e80c09d633520fed39b4f387a96bb7bff2fada3a55956d7ab14da0",
+      "mtime_utc": "2026-06-11T15:23:23.695131+00:00",
+      "n_rows": 13228,
+      "n_cols": 19,
+      "participants": [
+        "participant_01",
+        "participant_02",
+        "participant_03",
+        "participant_04",
+        "participant_05",
+        "participant_06",
+        "participant_07",
+        "participant_08",
+        "participant_09"
+      ],
+      "risk_class_counts": {
+        "0": 7891,
+        "1": 5337
+      }
+    },
+    {
+      "path": "results\\fallback_analysis_sets_n9_corrected_qc\\evaluation\\primary_within.csv",
+      "size_bytes": 725,
+      "sha256": "2a9fb51e455c778dfabd44aca9a36b429a1d4030ea3949a80e5f6d41aa8de9ed",
+      "mtime_utc": "2026-06-11T15:27:22.932088+00:00"
+    },
+    {
+      "path": "results\\fallback_analysis_sets_n9_corrected_qc\\evaluation\\primary_loso.csv",
+      "size_bytes": 810,
+      "sha256": "f65da66a8ef5286921e335ca7fbcf94702d9c9d52fa375511533ad61b290f99e",
+      "mtime_utc": "2026-06-11T15:27:22.933087+00:00"
+    },
+    {
+      "path": "results\\fallback_analysis_sets_n9_corrected_qc\\evaluation\\reduced_within.csv",
+      "size_bytes": 1079,
+      "sha256": "fb178d8e2688547636ec83f8e8c669ce037b13ec0eb67265150fe6996dae9681",
+      "mtime_utc": "2026-06-11T15:27:50.667221+00:00"
+    },
+    {
+      "path": "results\\fallback_analysis_sets_n9_corrected_qc\\evaluation\\reduced_loso.csv",
+      "size_bytes": 1181,
+      "sha256": "b95492a5a7a8e5b77d7aeaf04492f1308193846456b5a3713304108a8f1558eb",
+      "mtime_utc": "2026-06-11T15:27:50.668211+00:00"
+    },
+    {
+      "path": "results\\fallback_analysis_sets_n9_corrected_qc\\evaluation\\evaluation_summary.json",
+      "size_bytes": 2564,
+      "sha256": "2bf86995feb6a6c47d4031dff56879d879233a7dfa8f26afcc22440a7ee6e241",
+      "mtime_utc": "2026-06-11T15:27:50.711329+00:00"
+    },
+    {
+      "path": "ml\\models\\fallback_final_n9_corrected_qc\\rf_primary_4imu.joblib",
+      "size_bytes": 68405065,
+      "sha256": "bf594044e6f34adc5c627d86b0a31bd7b1ea4383c5e5cf5d0a0cc42c51b39488",
+      "mtime_utc": "2026-06-11T15:32:10.922450+00:00"
+    },
+    {
+      "path": "ml\\models\\fallback_final_n9_corrected_qc\\rf_reduced_pelvis_l3.joblib",
+      "size_bytes": 108445465,
+      "sha256": "3088b66b990184998fa4cd676e8a629eb9f996dfc2e58a47c287ab5437c83475",
+      "mtime_utc": "2026-06-11T15:32:13.627054+00:00"
+    },
+    {
+      "path": "ml\\models\\fallback_final_n9_corrected_qc\\rf_primary_4imu_feature_importance.csv",
+      "size_bytes": 672,
+      "sha256": "556dc2208092d51941d877d5b5132b55455399cbfe24e98b51e72e753a45707a",
+      "mtime_utc": "2026-06-11T15:32:11.098456+00:00"
+    },
+    {
+      "path": "ml\\models\\fallback_final_n9_corrected_qc\\rf_reduced_pelvis_l3_feature_importance.csv",
+      "size_bytes": 518,
+      "sha256": "8475a91c2ce40800dec45210178d542799176da134228ed8e34edef70a89482b",
+      "mtime_utc": "2026-06-11T15:32:13.803578+00:00"
+    },
+    {
+      "path": "ml\\models\\fallback_final_n9_corrected_qc\\fallback_model_metadata.json",
+      "size_bytes": 4046,
+      "sha256": "8cc32748093f38176f87423012532276f72b6a3eb157ed018d16683a73cc6a68",
+      "mtime_utc": "2026-06-11T15:32:13.990302+00:00"
+    },
+    {
+      "path": "scripts\\apply_rest_anchor_correction.py",
+      "size_bytes": 7960,
+      "sha256": "63af4bf5c31a5b1adcc8237d63f89a341f229918416c1a702f039a28b5e0a6e2",
+      "mtime_utc": "2026-06-06T23:00:15+00:00"
+    },
+    {
+      "path": "scripts\\reapply_qc_exclusions_corrected.py",
+      "size_bytes": 3849,
+      "sha256": "944fcb4bc69008cb85a80e704b1812614b310ceb9293212de74946e43925a360",
+      "mtime_utc": "2026-06-11T15:21:40.741824+00:00"
+    },
+    {
+      "path": "scripts\\prepare_fallback_analysis_sets.py",
+      "size_bytes": 7841,
+      "sha256": "8b6f4536f35c4772b2c3f6d4e93ae6413bb34cfee1d04f7b1832b81044e8a150",
+      "mtime_utc": "2026-06-06T23:00:15+00:00"
+    },
+    {
+      "path": "scripts\\evaluate_fallback_analysis_sets.py",
+      "size_bytes": 6492,
+      "sha256": "80e922ccbb2001494433429cc6f7fb6229fe786a4429ce58e2765dc16d7d9e0b",
+      "mtime_utc": "2026-06-06T23:00:15+00:00"
+    },
+    {
+      "path": "scripts\\train_fallback_analysis_models.py",
+      "size_bytes": 7635,
+      "sha256": "50eb3ac2246eb670d8c6391b6214314f882431a9150d61f9c1ee76e77213fbd5",
+      "mtime_utc": "2026-06-11T02:23:28.549168+00:00"
+    },
+    {
+      "path": "requirements.txt",
+      "size_bytes": 716,
+      "sha256": "53d8793a0775a2532e019be0808f7fdf9cea9e90ffd14bb571b92d4f4f3805a8",
+      "mtime_utc": "2026-06-08T14:29:39.502364+00:00"
+    }
+  ]
+}

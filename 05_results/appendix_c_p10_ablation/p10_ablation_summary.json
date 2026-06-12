@@ -1,0 +1,25 @@
+{
+  "primary": {
+    "tag": "primary",
+    "n_p10_windows": 818,
+    "standard_mean": 0.5698290495535526,
+    "augmented_mean": 0.5806058957715459,
+    "delta_mean": 0.010776846217993241,
+    "sanity": {
+      "max_abs_diff_vs_canonical": 0.0,
+      "reproduces_canonical": true
+    }
+  },
+  "reduced": {
+    "tag": "reduced",
+    "n_p10_windows": 1217,
+    "standard_mean": 0.6407926853467135,
+    "augmented_mean": 0.6299955991770125,
+    "delta_mean": -0.010797086169701035,
+    "sanity": {
+      "max_abs_diff_vs_canonical": 0.0,
+      "reproduces_canonical": true
+    }
+  },
+  "seed": 42
+}

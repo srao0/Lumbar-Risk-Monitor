@@ -1,0 +1,13 @@
+{
+  "generated": "2026-06-11T18:42:17.582694+00:00",
+  "dry_run": false,
+  "sklearn_version": "1.8.0",
+  "risky_threshold": 0.65,
+  "label_column": "risk_class_protocol",
+  "models_used": {
+    "primary_4imu_cleaned": "bf594044e6f34adc5c627d86b0a31bd7b1ea4383c5e5cf5d0a0cc42c51b39488",
+    "reduced_pelvis_l3": "3088b66b990184998fa4cd676e8a629eb9f996dfc2e58a47c287ab5437c83475"
+  },
+  "fallback_metadata": "C:\\Users\\sudik\\OneDrive\\ACADEMIC\\Year_4_EEE\\FYP_Spine_Project\\ml\\models\\fallback_final_n9_corrected_qc\\fallback_model_metadata.json",
+  "note": "Verification harness: frozen models, read-only, no estimator fitted."
+}

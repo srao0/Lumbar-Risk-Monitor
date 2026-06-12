@@ -1,0 +1,62 @@
+{
+  "experiment": "personalised_feature_augmentation_stage2b",
+  "created_at": "2026-06-11T19:37:25.624362+00:00",
+  "data_dir": "C:\\Users\\sudik\\OneDrive\\ACADEMIC\\Year_4_EEE\\FYP_Spine_Project\\data\\real\\fallback_corrected_qc",
+  "results_dir": "C:\\Users\\sudik\\OneDrive\\ACADEMIC\\Year_4_EEE\\FYP_Spine_Project\\results\\personalised_stage2b_corrected_qc_n9",
+  "models_dir": "C:\\Users\\sudik\\OneDrive\\ACADEMIC\\Year_4_EEE\\FYP_Spine_Project\\ml\\models\\personalised_stage2b_corrected_qc_n9",
+  "participants": [
+    "participant_01",
+    "participant_02",
+    "participant_03",
+    "participant_04",
+    "participant_05",
+    "participant_06",
+    "participant_07",
+    "participant_08",
+    "participant_09"
+  ],
+  "model_variants": [
+    "generic_other_participants",
+    "personal_calibration_only",
+    "personal_augmented"
+  ],
+  "feature_columns": [
+    "imu_trunk_angle_peak",
+    "imu_trunk_angle_mean",
+    "imu_angvel_peak",
+    "imu_angvel_mean",
+    "imu_time_in_risk_zone",
+    "imu_time_high_velocity",
+    "imu_ldlj",
+    "imu_jerk_rms",
+    "imu_jerk_peak",
+    "imu_ldlj_multiaxis",
+    "imu_compensation_index",
+    "imu_lumbopelv_ratio",
+    "imu_pelvis_angle_peak",
+    "imu_pelvis_angle_mean",
+    "imu_lat_angle_peak",
+    "imu_lat_angle_mean",
+    "imu_z_flex",
+    "imu_z_vel",
+    "imu_z_ldlj"
+  ],
+  "target_column": "risk_class_protocol",
+  "augmentation": {
+    "level": "feature",
+    "augment_factor": 8,
+    "noise_scale": 0.25,
+    "grouping": [
+      "participant_id",
+      "movement_label",
+      "risk_class_protocol"
+    ],
+    "clip_margin": "group min/max plus 10 percent range"
+  },
+  "split_policy": {
+    "baseline_static": "first baseline segment calibration; later baseline segment(s) future_test",
+    "other_labels": "earlier half of repetitions calibration; later half future_test",
+    "excluded": "risk_class_protocol=-1 and windows not matched to labelled repetitions"
+  },
+  "interpretation_limit": "pilot within-session future-repetition evaluation; not population-level or longitudinal evidence"
+}
