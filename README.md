@@ -29,13 +29,13 @@ Paired Wilcoxon (reduced vs primary, LOSO): **p = 0.0625**, no significant diffe
 | Folder | What's in it | Start here if you want to |
 |---|---|---|
 | `01_overview/` | One-page system description and architecture diagram | understand the system |
-| `02_hardware/` | PCB renders, schematic, layout, wiring, sensor placement | see the physical build |
+| `02_hardware/` | IMU and sEMG acquisition hardware, PCB renders and schematic | see the physical build |
 | `03_code/` | Pipeline, ML, firmware, acquisition scripts (runnable) | inspect or run the code |
 | `04_data/` | Phase I synthetic sessions, a worked example, data dictionary, signal illustrations | see what the data looks like |
 | `05_results/` | Results split by study phase, each with its own figures | check the evidence |
 | `06_demo/` | Replay-dashboard screenshots and video | see the real-time feedback |
 | `07_ethics/` | Participant information pack and ethics status | check governance |
-| `08_figures/` | Result plots, system diagrams, hardware photos, named by what they show | match figures to the report |
+| `08_figures/` | Result plots, hardware photos, placement and circuit figures, named by what they show | match figures to the report |
 | `09_misc_experiments/` | Side experiments and illustrative diagrams (pole-rig verification, movement archetypes, replay design concepts) | see supporting material |
 
 Supporting files at the root: `RUN_THE_PIPELINE.md` (end-to-end run guide with expected numbers), `PHASE_RUNBOOK.md` (per-phase workflow), `GLOSSARY.md` (acronyms), `LIMITATIONS_AND_KNOWN_ISSUES.md`, `requirements.txt`, `LICENSE`.
