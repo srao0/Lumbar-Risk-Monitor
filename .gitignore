@@ -36,3 +36,18 @@ Thumbs.db
 
 # NOTE: 04_data/synthetic_phase1/ IS committed on purpose — it is the
 # Phase I evidence and the largest single file is ~21 MB (under GitHub's limit).
+
+# heavy regenerable synthetic data (recreate via run_phase1_synthetic.py)
+04_data/sample_session/imu_data.csv
+04_data/synthetic_phase1/**/imu_data.csv
+04_data/synthetic_phase1/**/emg_data.csv
+
+# heavy regenerable synthetic data (recreate via run_phase1_synthetic.py)
+04_data/sample_session/imu_data.csv
+04_data/synthetic_phase1/**/imu_data.csv
+04_data/synthetic_phase1/**/emg_data.csv
+
+# heavy regenerable synthetic data (recreate via run_phase1_synthetic.py)
+04_data/sample_session/imu_data.csv
+04_data/synthetic_phase1/**/imu_data.csv
+04_data/synthetic_phase1/**/emg_data.csv

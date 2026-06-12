@@ -38,4 +38,4 @@ A **reduced two-IMU configuration (pelvis + L3) matches the full four-IMU config
 
 ## Engineering reality
 
-The design respects the constraints it was built under: ESP32-S3 ADC and BLE bandwidth limits, ~1–2 kHz EMG vs ~50–200 Hz IMU sampling, IMU–EMG synchronisation, EMG motion artefact, and wearable issues (belt movement, electrode contact). Where something was attractive in theory but impractical on this hardware, it was cut rather than claimed.
+The design respects the constraints it was built under: ESP32-S3 ADC and BLE bandwidth limits, ~200-250 kHz EMG vs ~50–200 Hz IMU sampling, IMU–EMG synchronisation, EMG motion artefact, and wearable issues (movement, electrode contact). Where something was attractive in theory but impractical on this hardware, it was cut. 
