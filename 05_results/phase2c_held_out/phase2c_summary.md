@@ -2,7 +2,7 @@
 
 _Generated 2026-06-11T18:42:17.563702+00:00 | dry_run=False | RISKY_THRESHOLD=0.65 | sklearn=1.8.0_
 
-Frozen deployment models applied read-only (no fitting). Ground truth = risk_class_protocol.
+Frozen deployment models applied read-only (no fitting). Ground truth is risk_class_protocol.
 Synthetic rows are pipeline/Phase-III verification, NOT generalisation evidence.
 
           condition      kind             route                model         held_out status     n  n_risky    auc  sensitivity  flagged_recall  specificity  overflag_rate     f1  missed_risk  false_alarms  tl_Safe  tl_Cautious  tl_Risky

@@ -29,65 +29,65 @@ Project phase use
 Pipeline overview
 -----------------
     IMU data (100 Hz)                  sEMG data (200 Hz)
-           |                                   |
-    +------v------------------+       +--------v---------------+
-    | Quaternion -> Euler      |       | Notch 50 Hz             |
-    | Relative joint angles    |       | Bandpass 20-95 Hz       |
-    | (th_PL, th_LT, th_TU)    |       +------------------------+
-    | Angular velocity (L3)    |                |
-    +--------------------------+       +--------v---------------+
-           |                           | Sliding window (2000ms) |
-    +------v------------------+       | RMS, MAV, ZCR per ch    |
-    | Sliding window (2000ms) |       | Asymmetry index (AI)    |
-    | LDLJ smoothness (SAL)   |       | Co-activation index(CAI)|
-    | Trunk angle (peak, mean) |       +------------------------+
-    | Angular velocity (peak)  |                |
-    | Time in risk zone        |       +--------v---------------+
-    +--------------------------+       | Timestamp alignment    |
-           |                           | (nearest IMU window)   |
-           +--------------+------------+
-                          |
-              +-----------v------------+
-              | Baseline z-scores       |
-              | z_flex, z_vel, z_sal    |
-              | z_rms_r, z_ar           |
-              | (from BASELINE_STATIC)  |
-              +-----------v------------+
-                          |
-                 +--------v--------+
-                 | feature_matrix  |
-                 |   .csv          |
-                 +-----------------+
+           │                                   │
+    ┌──────▼──────────────────┐       ┌────────▼───────────────┐
+    │ Quaternion → Euler       │       │ Notch 50 Hz             │
+    │ Relative joint angles    │       │ Bandpass 20–95 Hz       │
+    │ (θ_PL, θ_LT, θ_TU)      │       └────────────────────────┘
+    │ Angular velocity (L3)    │                │
+    └──────────────────────────┘       ┌────────▼───────────────┐
+           │                           │ Sliding window (2000ms) │
+    ┌──────▼──────────────────┐       │ RMS, MAV, ZCR per ch    │
+    │ Sliding window (2000ms) │       │ Asymmetry index (AI)    │
+    │ LDLJ smoothness (SAL)   │       │ Co-activation index(CAI)│
+    │ Trunk angle (peak, mean) │       └────────────────────────┘
+    │ Angular velocity (peak)  │                │
+    │ Time in risk zone        │       ┌────────▼───────────────┐
+    └──────────────────────────┘       │ Timestamp alignment    │
+           │                           │ (nearest IMU window)   │
+           └──────────────┬────────────┘
+                          │
+              ┌───────────▼────────────┐
+              │ Baseline z-scores       │
+              │ z_flex, z_vel, z_sal    │
+              │ z_rms_r, z_ar           │
+              │ (from BASELINE_STATIC)  │
+              └───────────▼────────────┘
+                          │
+                 ┌────────▼────────┐
+                 │ feature_matrix  │
+                 │   .csv          │
+                 └─────────────────┘
 
-Window design (spec 4.3)
+Window design (spec §4.3)
 --------------------------
     IMU window : 2000 ms = 200 samples at 100 Hz
     EMG window : 2000 ms = 400 samples at 200 Hz
-    Step       : 1000 ms (50% overlap) - feedback update rate 1 Hz
+    Step       : 1000 ms (50% overlap) — feedback update rate 1 Hz
     Alignment  : windows defined by centre timestamp in ms
 
-Baseline calibration (spec 5)
+Baseline calibration (spec §5)
 --------------------------------
     BASELINE_STATIC windows (Phase 0) are used to compute per-feature
-    mu and sigma for each session. Z-scores are then appended to every window:
-        z_flex = (th_L3_peak  - mu_flex) / sigma_flex
-        z_vel  = (w_peak     - mu_vel)  / sigma_vel
-        z_sal  = (SAL        - mu_sal)  / sigma_sal
-        z_rms_r = (RMS_RES  - mu_rms_r) / sigma_rms_r
-        z_ar    = (AI_ES    - mu_ar)    / sigma_ar
+    μ and σ for each session. Z-scores are then appended to every window:
+        z_flex = (θ_L3_peak  − μ_flex) / σ_flex
+        z_vel  = (ω_peak     − μ_vel)  / σ_vel
+        z_sal  = (SAL        − μ_sal)  / σ_sal
+        z_rms_r = (RMS_RES  − μ_rms_r) / σ_rms_r
+        z_ar    = (AI_ES    − μ_ar)    / σ_ar
 
     Z-scores of 0 = exactly at personal baseline.
     |z| > 2 = two standard deviations from personal norm (elevated risk).
 
-sEMG features (time-domain only - spec 6.2)
+sEMG features (time-domain only — spec §6.2)
 ----------------------------------------------
     RMS, MAV, ZCR per channel. Asymmetry Index (AI), Co-activation Index (CAI)
     per bilateral pair. MPF/spectral features excluded (200 Hz Nyquist constraint).
 
 References
 ----------
-    Flash & Hogan (1985). J Neuroscience, 5(7), 1688-1703.
-    Marras et al. (1993). Spine, 18(5), 617-628.
+    Flash & Hogan (1985). J Neuroscience, 5(7), 1688–1703.
+    Marras et al. (1993). Spine, 18(5), 617–628.
     NIOSH (2007). DHHS Publication No. 97-141.
 """
 
@@ -116,12 +116,12 @@ from signal_processing.emg.features import (
 )
 
 
-# --- Pipeline constants (spec 4.3) -------------------------------------------
+# ─── Pipeline constants (spec §4.3) ──────────────────────────────────────────
 
-IMU_FS                = 100.0    # Hz - IMU sampling rate
-EMG_FS                = 200.0    # Hz - Ganglion hardware limit (spec 2.2)
-WINDOW_MS             = 2000     # ms - 2 s window captures full movement cycles
-STEP_MS               = 1000     # ms - 50% overlap, 1 Hz feedback update rate
+IMU_FS                = 100.0    # Hz — IMU sampling rate
+EMG_FS                = 200.0    # Hz — Ganglion hardware limit (spec §2.2)
+WINDOW_MS             = 2000     # ms — 2 s window captures full movement cycles
+STEP_MS               = 1000     # ms — 50% overlap, 1 Hz feedback update rate
 
 # Derived sample counts
 IMU_WINDOW_SAMPLES    = int(WINDOW_MS * IMU_FS / 1000)   # 200
@@ -129,11 +129,11 @@ EMG_WINDOW_SAMPLES    = int(WINDOW_MS * EMG_FS / 1000)   # 400
 IMU_STEP_SAMPLES      = int(STEP_MS * IMU_FS / 1000)     # 100
 EMG_STEP_SAMPLES      = int(STEP_MS * EMG_FS / 1000)     # 200
 
-# Risk thresholds (spec 7.1)
-RISK_ANGLE_DEG        = 45.0     # degrees - NIOSH threshold for lumbar flexion
-RISK_VELOCITY_DEG_S   = 40.0    # deg/s  - Marras et al. threshold
+# Risk thresholds (spec §7.1)
+RISK_ANGLE_DEG        = 45.0     # degrees — NIOSH threshold for lumbar flexion
+RISK_VELOCITY_DEG_S   = 40.0    # deg/s  — Marras et al. threshold
 
-# Minimum baseline windows needed for reliable mu/sigma
+# Minimum baseline windows needed for reliable μ/σ
 MIN_BASELINE_WINDOWS  = 5
 
 # IMU column groups
@@ -151,7 +151,7 @@ REL_ANGLE_COLS = [
 EMG_CHANNEL_COLS = ["LES", "RES", "LOBL", "ROBL"]
 
 # Channels 3-4 are surface obliques (~4 cm lateral, L5 level), NOT multifidus.
-# Older code mapped emg_LOBL_mv/emg_ROBL_mv to "LMF"/"RMF" (multifidus) - a
+# Older code mapped emg_LOBL_mv/emg_ROBL_mv to "LMF"/"RMF" (multifidus) — a
 # mislabel, since the electrodes never recorded multifidus. The legacy "LMF"/
 # "RMF" keys are retained below as backward-compatible aliases so older inputs
 # still parse, but they now resolve to the correct LOBL/ROBL channel names.
@@ -164,12 +164,12 @@ EMG_COL_ALIASES = {
     "RES": "RES",
     "LOBL": "LOBL",
     "ROBL": "ROBL",
-    # legacy aliases (pre-fix mislabel) -> correct oblique channels
+    # legacy aliases (pre-fix mislabel) → correct oblique channels
     "LMF": "LOBL",
     "RMF": "ROBL",
 }
 
-# Features used for baseline z-score computation (spec 6.1, 6.2)
+# Features used for baseline z-score computation (spec §6.1, §6.2)
 BASELINE_LABEL = "BASELINE_STATIC"
 Z_SCORE_FEATURES = {
     # z_name: (raw_feature_col, output_col)
@@ -182,7 +182,7 @@ Z_SCORE_FEATURES = {
 
 
 
-# --- Signal-derived risk labelling (spec 6.3) --------------------------------
+# ─── Signal-derived risk labelling (spec §6.3) ───────────────────────────────
 # Labels are computed from the extracted window features using published
 # biomechanical thresholds rather than from generator class membership.
 # Each criterion maps to a specific risk mechanism and literature citation.
@@ -246,7 +246,7 @@ def apply_protocol_labels(
     This is the Phase 2 labelling strategy for real participant data.
     Labels are assigned from the experimental protocol (e.g. "participant
     is performing CLEAN_FLEXION between t=30 s and t=60 s") and have ZERO
-    label-feature circularity - no IMU or EMG feature values are read during
+    label-feature circularity — no IMU or EMG feature values are read during
     label assignment.
 
     Parameters
@@ -257,7 +257,7 @@ def apply_protocol_labels(
                             start_ms, end_ms, label, rep, risk_class
     min_overlap_fraction  : minimum fraction of window duration that must be
                             covered by a single protocol segment to inherit
-                            its label (default 0.5 - majority-vote equivalent)
+                            its label (default 0.5 — majority-vote equivalent)
 
     Returns
     -------
@@ -364,7 +364,7 @@ def label_window_from_signal(feats: dict) -> dict:
     }
 
 
-# --- IMU window feature extraction -------------------------------------------
+# ─── IMU window feature extraction ───────────────────────────────────────────
 
 def extract_imu_window_features(imu_window: pd.DataFrame) -> Dict[str, float]:
     """
@@ -372,20 +372,20 @@ def extract_imu_window_features(imu_window: pd.DataFrame) -> Dict[str, float]:
 
     Features
     --------
-    imu_trunk_angle_peak    : max (|th_PL| + |th_LT|) in window (deg) - total lumbar
-                              flexion from pelvis; aligns with NIOSH 45 deg criterion
+    imu_trunk_angle_peak    : max (|θ_PL| + |θ_LT|) in window (deg) — total lumbar
+                              flexion from pelvis; aligns with NIOSH 45° criterion
                               (absolute trunk angle from vertical approximation)
-    imu_trunk_angle_mean    : mean (|th_PL| + |th_LT|) in window (deg)
-    imu_angvel_peak         : max |w_L3| (deg/s)
-    imu_angvel_mean         : mean |w_L3| (deg/s)
-    imu_time_in_risk_zone   : fraction of window where (|th_PL|+|th_LT|) > 45 deg [0-1]
-    imu_time_high_velocity  : fraction where |w| > 40 deg/s [0-1]
-    imu_ldlj                 : LDLJ smoothness (log jerk^2 integral; lower = jerky)
-    imu_jerk_rms            : RMS jerk (deg/s^3)
-    imu_jerk_peak           : peak jerk (deg/s^3)
+    imu_trunk_angle_mean    : mean (|θ_PL| + |θ_LT|) in window (deg)
+    imu_angvel_peak         : max |ω_L3| (deg/s)
+    imu_angvel_mean         : mean |ω_L3| (deg/s)
+    imu_time_in_risk_zone   : fraction of window where (|θ_PL|+|θ_LT|) > 45° [0–1]
+    imu_time_high_velocity  : fraction where |ω| > 40°/s [0–1]
+    imu_ldlj                 : LDLJ smoothness (log jerk² integral; lower = jerky)
+    imu_jerk_rms            : RMS jerk (deg/s³)
+    imu_jerk_peak           : peak jerk (deg/s³)
     imu_ldlj_multiaxis       : LDLJ over 3-axis resultant velocity
-    imu_compensation_index  : th_TU / (|th_PL| + |th_TU|) - shoulder compensation
-    imu_lumbopelv_ratio     : |th_PL| / (|th_PL| + |th_LT|) - lumbar dominance
+    imu_compensation_index  : θ_TU / (|θ_PL| + |θ_TU|) — shoulder compensation
+    imu_lumbopelv_ratio     : |θ_PL| / (|θ_PL| + |θ_LT|) — lumbar dominance
     """
     feats = {}
 
@@ -402,9 +402,9 @@ def extract_imu_window_features(imu_window: pd.DataFrame) -> Dict[str, float]:
 
     # Total lumbar flexion = pelvis-L3 joint angle + L3-T12 joint angle.
     # This approximates trunk flexion from the global vertical and is the
-    # correct measure for the NIOSH 45 deg threshold (Marras et al. 1993).
-    # Using th_PL alone underestimates total flexion by the thoracolumbar
-    # contribution (typically 5-15 deg) and would never breach 45 deg for
+    # correct measure for the NIOSH 45° threshold (Marras et al. 1993).
+    # Using θ_PL alone underestimates total flexion by the thoracolumbar
+    # contribution (typically 5–15°) and would never breach 45° for
     # movements parameterised with realistic inter-segment distributions.
     trunk_flex = np.abs(theta_PL) + np.abs(theta_LT)
 
@@ -460,9 +460,9 @@ def extract_imu_window_features(imu_window: pd.DataFrame) -> Dict[str, float]:
         feats["imu_lat_angle_peak"] = np.nan
         feats["imu_lat_angle_mean"] = np.nan
 
-    # -- Accelerometer-based trunk tilt (L3) ----------------------------------
+    # ── Accelerometer-based trunk tilt (L3) ──────────────────────────────────
     # Compute trunk inclination directly from the L3 gravity vector.
-    # arctan2(ax, sqrt(ay^2+az^2)) gives pitch from vertical - no integration,
+    # arctan2(ax, sqrt(ay²+az²)) gives pitch from vertical — no integration,
     # no gyro drift.  Valid for quasi-static movements (<1 g lateral accel).
     # For fast bends the signal is contaminated by linear acceleration, but
     # velocity features already capture those windows; the accel tilt is most
@@ -489,7 +489,7 @@ def extract_imu_window_features(imu_window: pd.DataFrame) -> Dict[str, float]:
     return feats
 
 
-# --- Window alignment --------------------------------------------------------
+# --- Window alignment ─────────────────────────────────────────────────────────
 
 def build_window_index(
     timestamps_ms: np.ndarray,
@@ -527,11 +527,11 @@ def slice_by_time(
     end_ms: float,
     time_col: str = "timestamp_ms",
 ) -> pd.DataFrame:
-    """Return rows where time_col is in [start_ms, end_ms)."""
+    """Return rows where time_col ∈ [start_ms, end_ms)."""
     return df[(df[time_col] >= start_ms) & (df[time_col] < end_ms)]
 
 
-# --- Baseline z-score computation (spec 5) -----------------------------------
+# ─── Baseline z-score computation (spec §5) ──────────────────────────────────
 
 def compute_baseline_stats(
     feature_df: pd.DataFrame,
@@ -540,18 +540,18 @@ def compute_baseline_stats(
     min_windows: int = MIN_BASELINE_WINDOWS,
 ) -> Dict[str, Tuple[float, float]]:
     """
-    Compute per-feature (mu, sigma) from BASELINE_STATIC windows.
+    Compute per-feature (μ, σ) from BASELINE_STATIC windows.
 
     Parameters
     ----------
     feature_df     : DataFrame with all windows including movement_label column
     baseline_label : label string identifying calibration windows
-    z_feature_map  : dict mapping z-name -> (raw_col, output_col)
+    z_feature_map  : dict mapping z-name → (raw_col, output_col)
     min_windows    : minimum windows required; returns NaN stats if below
 
     Returns
     -------
-    stats : dict mapping raw_col -> (mean, std)
+    stats : dict mapping raw_col → (mean, std)
     """
     baseline_rows = feature_df[feature_df["movement_label"] == baseline_label]
     stats = {}
@@ -580,15 +580,15 @@ def add_z_scores(
     Append z-score columns to feature_df using pre-computed baseline stats.
 
     For each feature in z_feature_map:
-        z = (x - mu_baseline) / sigma_baseline
+        z = (x - μ_baseline) / σ_baseline
 
-    Z-scores are clipped to +-5 to limit the influence of outliers.
+    Z-scores are clipped to ±5 to limit the influence of outliers.
 
     Parameters
     ----------
     feature_df      : DataFrame with raw feature columns
-    baseline_stats  : dict mapping raw_col -> (mean, std)
-    z_feature_map   : dict mapping z-name -> (raw_col, output_col)
+    baseline_stats  : dict mapping raw_col → (mean, std)
+    z_feature_map   : dict mapping z-name → (raw_col, output_col)
 
     Returns
     -------
@@ -608,7 +608,7 @@ def add_z_scores(
     return df
 
 
-# --- sEMG amplitude normalisation (resting-baseline ratio) -------------------
+# ─── sEMG amplitude normalisation (resting-baseline ratio) ───────────────────
 
 EMG_AMPLITUDE_NORM_METHODS = ("none", "resting_baseline_ratio")
 
@@ -660,18 +660,18 @@ def normalize_emg_amplitude_to_baseline(
     for col in amp_cols:
         vals = baseline_rows[col].dropna().values if col in baseline_rows else []
         if len(vals) < min_windows:
-            report[col] = float("nan")          # insufficient baseline -> leave raw
+            report[col] = float("nan")          # insufficient baseline → leave raw
             continue
         ref = float(np.mean(vals))
         if not np.isfinite(ref) or ref < eps:
-            report[col] = float("nan")          # degenerate reference -> leave raw
+            report[col] = float("nan")          # degenerate reference → leave raw
             continue
         df[col] = df[col] / ref
         report[col] = ref
     return df, report
 
 
-# --- NaN fill helper ---------------------------------------------------------
+# ─── NaN fill helper ─────────────────────────────────────────────────────────
 
 def _emg_nan_row(channel_names: List[str]) -> dict:
     """Return a dict of NaN EMG features for windows with insufficient EMG data."""
@@ -687,7 +687,7 @@ def _emg_nan_row(channel_names: List[str]) -> dict:
     return row
 
 
-# --- Main pipeline -----------------------------------------------------------
+# ─── Main pipeline ────────────────────────────────────────────────────────────
 
 def run_pipeline(
     session_dir: str,
@@ -735,9 +735,6 @@ def run_pipeline(
     written to the output CSV regardless of ``label_source``, so the
     two labelling strategies can be compared on the same data.
 
-    emg_amplitude_norm : "none" (default; raw mV) or "resting_baseline_ratio"
-        (divide emg_rms_*/emg_mav_* by the per-session BASELINE_STATIC mean).
-
     Returns
     -------
     feature_df : DataFrame, one row per window
@@ -749,19 +746,19 @@ def run_pipeline(
     imu_window_min = int(window_ms * imu_fs / 1000) // 2
     emg_window_min = int(window_ms * emg_fs / 1000) // 2
 
-    # -- Load data ---------------------------------------------------------
+    # ── Load data ─────────────────────────────────────────────────────────
     imu_df    = pd.read_csv(session_dir / "imu_data.csv")
     emg_df    = pd.read_csv(session_dir / "emg_data.csv")
     labels_df = pd.read_csv(session_dir / "labels.csv")
 
-    # -- Remap EMG column names --------------------------------------------
+    # ── Remap EMG column names ────────────────────────────────────────────
     emg_df = emg_df.rename(columns={
         alias: canon for alias, canon in EMG_COL_ALIASES.items()
         if alias in emg_df.columns
     })
     present_emg_cols = [c for c in EMG_CHANNEL_COLS if c in emg_df.columns]
 
-    # -- sEMG filtering (20-95 Hz bandpass + 50 Hz notch at 200 Hz) -------
+    # ── sEMG filtering (20–95 Hz bandpass + 50 Hz notch at 200 Hz) ───────
     emg_channels_raw = emg_df[present_emg_cols].to_numpy(dtype=float)
     emg_filtered_arr = filter_emg_array(
         emg_channels_raw, fs=emg_fs, apply_notch=apply_notch
@@ -771,7 +768,7 @@ def run_pipeline(
         emg_df_filt[col + "_filt"] = emg_filtered_arr[:, i]
     filt_cols = [c + "_filt" for c in present_emg_cols]
 
-    # -- Window index ------------------------------------------------------
+    # ── Window index ──────────────────────────────────────────────────────
     imu_times = imu_df["timestamp_ms"].to_numpy()
     windows   = build_window_index(imu_times, window_ms=window_ms, step_ms=step_ms)
 
@@ -779,20 +776,20 @@ def run_pipeline(
     for win in windows:
         s_ms, e_ms = win["start_ms"], win["end_ms"]
 
-        # -- IMU window ----------------------------------------------------
+        # ── IMU window ────────────────────────────────────────────────────
         imu_win = slice_by_time(imu_df, s_ms, e_ms)
         if len(imu_win) < imu_window_min:
             continue
 
-        # -- EMG window ----------------------------------------------------
+        # ── EMG window ────────────────────────────────────────────────────
         emg_win = slice_by_time(emg_df_filt, s_ms, e_ms)
         has_emg = len(emg_win) >= emg_window_min
 
-        # -- Protocol label: time-segment lookup from labels.csv ----------
-        # Zero circularity - no features are read during assignment.
+        # ── Protocol label: time-segment lookup from labels.csv ──────────
+        # Zero circularity — no features are read during assignment.
         proto = apply_protocol_labels(s_ms, e_ms, labels_df)
 
-        # -- Archetype label: from imu_data.csv columns (synthetic only) --
+        # ── Archetype label: from imu_data.csv columns (synthetic only) ──
         # For real data these will all be UNKNOWN/-1; for synthetic data
         # the generator writes per-row labels into imu_data.csv directly.
         if "risk_class" in imu_win.columns:
@@ -811,7 +808,7 @@ def run_pipeline(
         else:
             movement_label = "UNKNOWN"
 
-        # -- Feature extraction --------------------------------------------
+        # ── Feature extraction ────────────────────────────────────────────
         row = {
             "window_centre_ms":    win["centre_ms"],
             "movement_label":      movement_label,
@@ -820,7 +817,7 @@ def run_pipeline(
 
         row.update(extract_imu_window_features(imu_win))
 
-        # -- Signal-derived labelling (spec 6.3) - always computed --------
+        # ── Signal-derived labelling (spec §6.3) — always computed ───────
         # Written to risk_class_signal. Has label-feature circularity on
         # synthetic data (IMU features used both as criteria and as inputs).
         # Use only for synthetic evaluation; not for real participant data.
@@ -830,16 +827,16 @@ def run_pipeline(
         row["risk_clinical"]     = sig_label["risk_clinical"]
         row["risk_layman"]       = sig_label["risk_layman"]
 
-        # -- Protocol labelling - always computed --------------------------
+        # ── Protocol labelling — always computed ──────────────────────────
         # Written to risk_class_protocol. Zero circularity: derived entirely
         # from researcher-defined time segments in labels.csv.
         row["risk_class_protocol"] = proto["risk_class"]
 
-        # -- Active risk_class: controlled by label_source -----------------
+        # ── Active risk_class: controlled by label_source ─────────────────
         if label_source == "protocol":
             row["risk_class"] = proto["risk_class"]
         else:
-            # "signal" (default) - backwards compatible with synthetic pipeline
+            # "signal" (default) — backwards compatible with synthetic pipeline
             row["risk_class"] = sig_label["risk_class"]
 
         if has_emg:
@@ -857,7 +854,7 @@ def run_pipeline(
 
     feature_df = pd.DataFrame(rows)
 
-    # -- sEMG amplitude normalisation (resting-baseline ratio) -------------
+    # ── sEMG amplitude normalisation (resting-baseline ratio) ─────────────
     # Default "none" preserves the original raw-mV amplitude behaviour and the
     # frozen IMU-only/fallback lineage. When enabled, emg_rms_*/emg_mav_* are
     # divided by their per-session resting-baseline mean (see
@@ -877,18 +874,18 @@ def run_pipeline(
             print(f"  [emg-norm] resting-baseline ratio applied to "
                   f"{len(_emg_norm_report)} amplitude features")
 
-    # -- Baseline z-scores (spec 5) ----------------------------------------
+    # ── Baseline z-scores (spec §5) ───────────────────────────────────────
     baseline_stats = compute_baseline_stats(feature_df)
     feature_df     = add_z_scores(feature_df, baseline_stats)
 
-    # -- Save --------------------------------------------------------------
+    # ── Save ──────────────────────────────────────────────────────────────
     out_path = Path(output_dir) / "feature_matrix.csv"
     feature_df.to_csv(out_path, index=False)
 
     return feature_df
 
 
-# --- Batch runner ------------------------------------------------------------
+# ─── Batch runner ─────────────────────────────────────────────────────────────
 
 def _discover_session_dirs(data_dir: Path) -> list[Path]:
     """
@@ -962,7 +959,6 @@ def run_pipeline_batch(
     force        : allow replacement of existing official Phase II outputs.
     command_used : command recorded in dataset_manifest.json.
     **kwargs     : additional keyword args passed to run_pipeline
-                   (e.g. emg_amplitude_norm)
 
     Returns
     -------
@@ -1019,7 +1015,7 @@ def run_pipeline_batch(
     return combined
 
 
-# --- CLI entry point ---------------------------------------------------------
+# ─── CLI entry point ──────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
     import argparse
@@ -1044,9 +1040,9 @@ if __name__ == "__main__":
         "--label_source", default="protocol", choices=["signal", "protocol"],
         help=(
             "How to assign the primary risk_class label for each window.\n"
-            "  protocol (default) - derive from task/time segments in labels.csv.\n"
+            "  protocol (default) — derive from task/time segments in labels.csv.\n"
             "            Use for Phase I synthetic validation and all real data.\n"
-            "  signal   - derive from IMU features using biomechanical\n"
+            "  signal   — derive from IMU features using biomechanical\n"
             "            thresholds (label_window_from_signal). Fast and automatic\n"
             "            but circular if used as a model target. Use only as a\n"
             "            diagnostic/explanation channel."

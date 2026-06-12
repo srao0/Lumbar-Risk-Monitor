@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 MPU-6050 raw-counts to physical-units converter
-Spinal Movement Risk Monitor, FYP 2025/26
+Spinal Movement Risk Monitor — FYP 2025/26
 
 Converts Arduino serial output (raw 16-bit ADC counts) to:
     Accelerometer : g  (1 g = 9.81 m/s²)
@@ -38,11 +38,13 @@ import pandas as pd
 from pathlib import Path
 from typing import Union
 
+# ─────────────────────────────────────────────────────────────────────────────
 # SCALE FACTORS (MPU-6050 at default ±2g / ±250 dps)
+# ─────────────────────────────────────────────────────────────────────────────
 
 ACCEL_SCALE = 16384.0   # LSB per g   — from MPU-6050 datasheet Table 1, ±2g range
 # GYRO_CONFIG = 0x08 in imu_reader.ino → ±500 dps range → 65.5 LSB/dps
-# (Originally 131.0 for ±250 dps, changed when we fixed gyro saturation)
+# (Originally 131.0 for ±250 dps — changed when we fixed gyro saturation)
 GYRO_SCALE  = 65.5      # LSB per dps — MPU-6050 datasheet Table 2, ±500 dps
 
 # Maximum representable values (sanity check bounds)
@@ -64,7 +66,9 @@ IMU_LABELS = ["Pelvis", "L3", "T12", "T4"]
 IMU_AXES   = ["ax", "ay", "az", "gx", "gy", "gz"]
 
 
+# ─────────────────────────────────────────────────────────────────────────────
 # CONVERTER
+# ─────────────────────────────────────────────────────────────────────────────
 
 class RawConverter:
     """
@@ -114,8 +118,8 @@ class RawConverter:
         dict with keys:
             {prefix}_ax_g, {prefix}_ay_g, {prefix}_az_g  [g]
             {prefix}_gx_dps, {prefix}_gy_dps, {prefix}_gz_dps  [dps]
-            {prefix}_accel_mag_g    [g], should be ~1.0 at rest
-            {prefix}_gyro_mag_dps   [dps], should be ~0.0 at rest
+            {prefix}_accel_mag_g    [g]   — should be ~1.0 at rest
+            {prefix}_gyro_mag_dps   [dps] — should be ~0.0 at rest
         """
         p = imu_prefix
         ax_g   = cls.counts_to_g(row["ax"])
@@ -166,7 +170,7 @@ class RawConverter:
         )
         raw.columns = [c.strip() for c in raw.columns]
 
-        # Drop embedded header rows, firmware resends the CSV header every
+        # Drop embedded header rows — firmware resends the CSV header every
         # 1000 samples (for robustness against missed boot-time header).
         # These rows contain "t_ms" as the value in the t_ms column instead
         # of a number, which causes dtype errors downstream.
@@ -232,7 +236,9 @@ class RawConverter:
         return out
 
 
+# ─────────────────────────────────────────────────────────────────────────────
 # GYRO BIAS CALIBRATION
+# ─────────────────────────────────────────────────────────────────────────────
 
 class GyroBiasCalibrator:
     """
@@ -247,7 +253,7 @@ class GyroBiasCalibrator:
     Offsets are stored in dps (after RawConverter.from_csv has been applied).
     If you need raw-count offsets, multiply each dps value by GYRO_SCALE.
 
-    The MPU-6050 also has a built-in factory trim mechanism (register 0x0D, 0x12),
+    The MPU-6050 also has a built-in factory trim mechanism (register 0x0D–0x12),
     but software calibration is sufficient for this application.
     """
 
@@ -259,7 +265,7 @@ class GyroBiasCalibrator:
         Parameters
         ----------
         df_phys : pd.DataFrame
-            Output of RawConverter.from_csv(), physical units in dps.
+            Output of RawConverter.from_csv() — physical units in dps.
         imu_prefix : str
             Column prefix (e.g. "imu", "Pelvis", "L3").
 
@@ -352,16 +358,18 @@ class GyroBiasCalibrator:
         return out
 
 
+# ─────────────────────────────────────────────────────────────────────────────
 # VALIDATION
+# ─────────────────────────────────────────────────────────────────────────────
 
 class ConversionValidator:
     """
     Validates converted IMU data against expected physical constraints.
 
     Three checks:
-      1. Gravity check, accel magnitude at rest should be 1.0 ± GRAVITY_TOL g
-      2. Gyro bias check, gyro magnitude at rest should be < GYRO_REST_MAX_DPS
-      3. Dynamic check, moving segments should show higher gyro magnitude
+      1. Gravity check  — accel magnitude at rest should be 1.0 ± GRAVITY_TOL g
+      2. Gyro bias check — gyro magnitude at rest should be < GYRO_REST_MAX_DPS
+      3. Dynamic check  — moving segments should show higher gyro magnitude
                           than the rest segment
     """
 
@@ -382,9 +390,9 @@ class ConversionValidator:
         """
         Two-tier gyro bias check.
 
-        PASS  : < GYRO_REST_WARN_DPS, no calibration needed
-        WARN  : WARN_DPS ≤ mag < FAIL_DPS, normal per-unit bias; subtract offset before integration
-        FAIL  : ≥ GYRO_REST_FAIL_DPS, unusually large; check sensor or connections
+        PASS  : < GYRO_REST_WARN_DPS  — no calibration needed
+        WARN  : WARN_DPS ≤ mag < FAIL_DPS — normal per-unit bias; subtract offset before integration
+        FAIL  : ≥ GYRO_REST_FAIL_DPS  — unusually large; check sensor or connections
 
         Returns True only for PASS (caller should not treat WARN as a pipeline blocker).
         """
@@ -428,14 +436,14 @@ def validate_on_sample_data() -> None:
     Arduino sketch (Table 3 from the interim report, single MPU-6050 at L3).
 
     These are raw counts at 1 Hz from five movement classes.
-    The test is offline, no hardware required.
+    The test is offline — no hardware required.
     """
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    # Sample data from Arduino serial output
-    # Format: (t_ms, ax, ay, az, gx, gy, gz), raw counts
+    # ── Sample data from Arduino serial output ─────────────────────────────
+    # Format: (t_ms, ax, ay, az, gx, gy, gz)  — raw counts
     samples = {
         "Standing Still": [
             (14256, -6612, -14384,  5556,  -766,  -180,  -351),
@@ -517,7 +525,7 @@ def validate_on_sample_data() -> None:
         # Gyro bias check only for standing still
         if movement == "Standing Still":
             bias_ok = validator.check_gyro_bias(gyro_mag, movement)
-            # WARN does not fail the pipeline, note it but continue
+            # WARN does not fail the pipeline — note it but continue
             if not bias_ok:
                 all_pass = False
             rest_gyro = gyro_mag
@@ -548,7 +556,7 @@ def validate_on_sample_data() -> None:
         print(f"  before any angle integration (Madgwick or otherwise).")
     print("=" * 65)
 
-    # Gravity axis identification
+    # ── Gravity axis identification ────────────────────────────────────────
     still = results["Standing Still"]
     gravity_components = {
         "X (ax)": abs(still["ax_g"]),
@@ -564,7 +572,7 @@ def validate_on_sample_data() -> None:
     print(f"  This means the IMU is oriented with its {dominant_axis} axis "
           f"approximately vertical.")
 
-    # Bar chart: gyro magnitude by movement
+    # ── Bar chart: gyro magnitude by movement ─────────────────────────────
     movements  = list(results.keys())
     gyro_mags  = [results[m]["gyro_mag_dps"] for m in movements]
     accel_mags = [results[m]["accel_mag_g"]  for m in movements]
@@ -590,7 +598,7 @@ def validate_on_sample_data() -> None:
     axes[0].tick_params(axis="x", rotation=15)
     axes[0].legend(fontsize=8)
 
-    # Accel magnitude, should be ~1 g for all
+    # Accel magnitude — should be ~1 g for all
     bars2 = axes[1].bar(movements, accel_mags, color=colours, alpha=0.85,
                         edgecolor="white")
     axes[1].axhline(1.0, color="grey", linestyle="-", linewidth=1.0,
@@ -621,7 +629,9 @@ def validate_on_sample_data() -> None:
     print(f"\nValidation plot saved → {out_path}")
 
 
+# ─────────────────────────────────────────────────────────────────────────────
 # N-POSE ANATOMICAL CALIBRATION
+# ─────────────────────────────────────────────────────────────────────────────
 
 class NPoseCalibrator:
     """
@@ -631,7 +641,7 @@ class NPoseCalibrator:
     Problem
     -------
     Madgwick fusion outputs quaternions in a world frame aligned to the
-    sensor's initial orientation, NOT to the anatomical frame.  If an
+    sensor's initial orientation — NOT to the anatomical frame.  If an
     IMU is mounted at an angle (e.g. the L3 sensor is tilted 10° due to
     belt placement), every subsequent relative angle inherits this offset.
 
@@ -641,7 +651,7 @@ class NPoseCalibrator:
        feet hip-width, gaze forward) for ≥10 s at the very start of the
        session.  This forms the N-pose calibration window.
     2. compute_offsets() computes the mean fused quaternion per segment over
-       this window, call it q_ref[seg].  This is the "zero" orientation.
+       this window — call it q_ref[seg].  This is the "zero" orientation.
     3. apply() premultiplies every subsequent fused quaternion by
        q_ref[seg]^* (conjugate = inverse for unit quaternions):
            q_corrected = q_ref^* ⊗ q_raw
@@ -652,10 +662,10 @@ class NPoseCalibrator:
     References
     ----------
     Favre et al. (2009). Ambulatory measurement of 3D knee joint angle.
-    J Biomechanics, 42(14), 2330-2335.
+    J Biomechanics, 42(14), 2330–2335.
 
     Cutti et al. (2010). 'Outwalk': protocol for clinical gait analysis with
-    ambulatory inertial and magnetic sensors. Proc IMechE, 224(H), 1217-1228.
+    ambulatory inertial and magnetic sensors. Proc IMechE, 224(H), 1217–1228.
     """
 
     SEGMENTS = ["pelvis", "l3", "t12", "t4"]
@@ -700,7 +710,7 @@ class NPoseCalibrator:
 
         Uses the window [skip_seconds, n_seconds] of the fused DataFrame.
         Skipping the first skip_seconds avoids including the Madgwick filter's
-        initial convergence transient (which can span 3-5 s even with
+        initial convergence transient (which can span 3–5 s even with
         accel-based initialisation).
 
         The participant must be standing still in the anatomical position
@@ -888,7 +898,7 @@ class NPoseCalibrator:
         Parameters
         ----------
         npose_csv : path to Arduino 4-IMU CSV in physical units (g / dps)
-                    , must be output of RawConverter + GyroBiasCalibrator
+                    — must be output of RawConverter + GyroBiasCalibrator
         imu_fs    : sampling rate in Hz
         beta      : Madgwick beta gain
 
@@ -903,6 +913,7 @@ class NPoseCalibrator:
                                    fs=imu_fs)
 
 
+# ─────────────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
     validate_on_sample_data()

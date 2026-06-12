@@ -1,7 +1,7 @@
-# Phase II.B Personalised Calibration Interpretation
+# Phase II.B personalised calibration interpretation
 
 This is a pilot subject-specific feature augmentation experiment. It evaluates
-future repetitions from the same participant and should not be interpreted as
+future repetitions from the same participant and should not be read as
 population-level or longitudinal generalisation evidence.
 
 - participant_01: personalised augmentation improved AUC versus the generic other-participants model (delta AUC=0.286).

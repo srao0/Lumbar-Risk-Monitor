@@ -2,7 +2,7 @@
 """
 Madgwick AHRS Filter
 ====================
-Spinal Movement Risk Monitor, FYP 2025/26
+Spinal Movement Risk Monitor — FYP 2025/26
 
 Implements the Madgwick gradient-descent AHRS algorithm for fusing
 accelerometer and gyroscope readings into a quaternion orientation estimate.
@@ -19,7 +19,7 @@ between gyro trust (low beta → responsive but drifty) and accel trust
 (high beta → stable but noisy during dynamic motion).
 
 For lumbar spine kinematics at 100 Hz:
-    beta = 0.033  →  ~2° steady-state error, good for 1-3 Hz trunk movements
+    beta = 0.033  →  ~2° steady-state error, good for 1–3 Hz trunk movements
     beta = 0.1    →  ~5° error, appropriate if sensor is very noisy
 
 Usage
@@ -44,13 +44,15 @@ import pandas as pd
 from typing import Optional, Union
 
 
+# ─────────────────────────────────────────────────────────────────────────────
 # QUATERNION UTILITIES
+# ─────────────────────────────────────────────────────────────────────────────
 
 def quat_multiply(q: np.ndarray, r: np.ndarray) -> np.ndarray:
     """
     Hamilton product of two quaternions [w, x, y, z].
 
-    q ⊗ r  (non-commutative, order matters for rotation composition)
+    q ⊗ r  (non-commutative — order matters for rotation composition)
     """
     w0, x0, y0, z0 = q
     w1, x1, y1, z1 = r
@@ -82,9 +84,9 @@ def quat_to_euler_zyx(q: np.ndarray) -> tuple:
     Returns
     -------
     (pitch, roll, yaw) in degrees
-        pitch : rotation about Y axis (sagittal, flexion/extension)
-        roll  : rotation about X axis (frontal, lateral bend)
-        yaw   : rotation about Z axis (transverse, rotation)
+        pitch : rotation about Y axis (sagittal — flexion/extension)
+        roll  : rotation about X axis (frontal — lateral bend)
+        yaw   : rotation about Z axis (transverse — rotation)
 
     Note: ZYX (yaw-pitch-roll) is the standard aerospace convention and
     matches how trunk angles are reported clinically (flexion first).
@@ -92,17 +94,17 @@ def quat_to_euler_zyx(q: np.ndarray) -> tuple:
     """
     w, x, y, z = q
 
-    # Pitch (Y), flexion/extension
+    # Pitch (Y) — flexion/extension
     sinp = 2.0 * (w*y - z*x)
     sinp = np.clip(sinp, -1.0, 1.0)   # clamp for numerical stability
     pitch = np.degrees(np.arcsin(sinp))
 
-    # Roll (X), lateral flexion
+    # Roll (X) — lateral flexion
     sinr_cosp = 2.0 * (w*x + y*z)
     cosr_cosp = 1.0 - 2.0 * (x*x + y*y)
     roll = np.degrees(np.arctan2(sinr_cosp, cosr_cosp))
 
-    # Yaw (Z), axial rotation
+    # Yaw (Z) — axial rotation
     siny_cosp = 2.0 * (w*z + x*y)
     cosy_cosp = 1.0 - 2.0 * (y*y + z*z)
     yaw = np.degrees(np.arctan2(siny_cosp, cosy_cosp))
@@ -122,7 +124,9 @@ def relative_quaternion(q_child: np.ndarray, q_parent: np.ndarray) -> np.ndarray
     return quat_multiply(quat_conjugate(q_parent), q_child)
 
 
+# ─────────────────────────────────────────────────────────────────────────────
 # MADGWICK AHRS
+# ─────────────────────────────────────────────────────────────────────────────
 
 class MadgwickAHRS:
     """
@@ -136,7 +140,7 @@ class MadgwickAHRS:
     ----------
     beta : float
         Filter gain. Controls how strongly the accelerometer corrects
-        gyro drift. Typical range 0.01-0.1 for MEMS IMUs at 100 Hz.
+        gyro drift. Typical range 0.01–0.1 for MEMS IMUs at 100 Hz.
         - 0.033 : recommended for slow lumbar movements (< 1 Hz)
         - 0.05  : recommended for faster movements / more accel noise
     sample_freq : float
@@ -175,12 +179,12 @@ class MadgwickAHRS:
 
         Parameters
         ----------
-        accel_g  : (3,) array, accelerometer reading in g [ax, ay, az]
-        gyro_dps : (3,) array, gyroscope reading in degrees/second [gx, gy, gz]
+        accel_g  : (3,) array — accelerometer reading in g [ax, ay, az]
+        gyro_dps : (3,) array — gyroscope reading in degrees/second [gx, gy, gz]
 
         Returns
         -------
-        q : (4,) array, updated quaternion [w, x, y, z] (unit norm)
+        q : (4,) array — updated quaternion [w, x, y, z] (unit norm)
         """
         q = self.q
         w, x, y, z = q
@@ -192,7 +196,7 @@ class MadgwickAHRS:
         a = np.array(accel_g, dtype=float)
         norm_a = np.linalg.norm(a)
         if norm_a < 1e-6:
-            # No accel signal, pure gyro integration this step
+            # No accel signal — pure gyro integration this step
             q_dot = 0.5 * quat_multiply(q, np.array([0.0, gx, gy, gz]))
             self.q = quat_normalize(q + q_dot * self.dt)
             return self.q.copy()
@@ -200,19 +204,19 @@ class MadgwickAHRS:
 
         ax, ay, az = a
 
-        # Gradient descent: objective function f and Jacobian J
+        # ── Gradient descent: objective function f and Jacobian J ────────────
         # The objective function measures the error between measured gravity
         # (in sensor frame) and expected gravity (world +z = [0, 0, 1]).
         # f = J^T(q) · [ q ⊗ [0,0,0,1] ⊗ q^* - a_measured ]
 
-        # f(q, a), gradient of objective wrt sensor gravity reference
+        # f(q, a) — gradient of objective wrt sensor gravity reference
         f = np.array([
             2.0*(x*z - w*y)     - ax,
             2.0*(w*x + y*z)     - ay,
             2.0*(0.5 - x*x - y*y) - az,
         ])
 
-        # Jacobian J(q), 3×4 matrix (partial derivatives of f wrt q)
+        # Jacobian J(q)  — 3×4 matrix (partial derivatives of f wrt q)
         J = np.array([
             [-2.0*y,  2.0*z, -2.0*w, 2.0*x],
             [ 2.0*x,  2.0*w,  2.0*z, 2.0*y],
@@ -225,10 +229,10 @@ class MadgwickAHRS:
         if grad_norm > 1e-10:
             grad = grad / grad_norm
 
-        # Gyro integration
+        # ── Gyro integration ─────────────────────────────────────────────────
         q_dot_gyro = 0.5 * quat_multiply(q, np.array([0.0, gx, gy, gz]))
 
-        # Combined update
+        # ── Combined update ──────────────────────────────────────────────────
         q_dot = q_dot_gyro - self.beta * grad
         self.q = quat_normalize(q + q_dot * self.dt)
 
@@ -244,12 +248,12 @@ class MadgwickAHRS:
 
         Parameters
         ----------
-        accel_g  : (N, 3) array, accelerometer readings in g
-        gyro_dps : (N, 3) array, gyroscope readings in degrees/second
+        accel_g  : (N, 3) array — accelerometer readings in g
+        gyro_dps : (N, 3) array — gyroscope readings in degrees/second
 
         Returns
         -------
-        quaternions : (N, 4) array, orientation quaternion [w, x, y, z] per sample
+        quaternions : (N, 4) array — orientation quaternion [w, x, y, z] per sample
         """
         n = len(accel_g)
         quats = np.zeros((n, 4))
@@ -258,9 +262,11 @@ class MadgwickAHRS:
         return quats
 
 
+# ─────────────────────────────────────────────────────────────────────────────
 # BATCH FUSION HELPERS
+# ─────────────────────────────────────────────────────────────────────────────
 
-# PLTU segment order, matches TCA9548A channel assignment and pipeline columns
+# PLTU segment order — matches TCA9548A channel assignment and pipeline columns
 SEGMENT_ORDER = ["pelvis", "l3", "t12", "t4"]
 ARDUINO_PREFIX_MAP = {
     "pelvis": "Pelvis",
@@ -282,7 +288,7 @@ def fuse_imu_dataframe(
 
     Parameters
     ----------
-    df_phys : output of RawConverter.from_csv() for a single IMU, must contain
+    df_phys : output of RawConverter.from_csv() for a single IMU — must contain
               columns {prefix}_{ax/ay/az}_g and {prefix}_{gx/gy/gz}_dps
     imu_prefix : column prefix used in df_phys (e.g. "imu", "L3")
     fs    : IMU sampling frequency (Hz)
@@ -337,12 +343,12 @@ def fuse_four_imu_dataframe(
     -------
     DataFrame with columns:
         t_ms (preserved)
-        {seg}_qw, {seg}_qx, {seg}_qy, {seg}_qz, world-frame quaternion per segment
+        {seg}_qw, {seg}_qx, {seg}_qy, {seg}_qz   — world-frame quaternion per segment
         {seg}_pitch_deg, {seg}_roll_deg, {seg}_yaw_deg
-        theta_PL_pitch/roll/yaw: Pelvis→L3 relative angles (deg)
-        theta_LT_pitch/roll/yaw: L3→T12 relative angles (deg)
-        theta_TU_pitch/roll/yaw: T12→T4 relative angles (deg)
-        angvel_L3_sagittal: L3 angular velocity in sagittal plane (deg/s)
+        theta_PL_pitch/roll/yaw   — Pelvis→L3 relative angles (deg)
+        theta_LT_pitch/roll/yaw   — L3→T12 relative angles (deg)
+        theta_TU_pitch/roll/yaw   — T12→T4 relative angles (deg)
+        angvel_L3_sagittal        — L3 angular velocity in sagittal plane (deg/s)
     """
     df_out = pd.DataFrame()
     if "t_ms" in df_phys.columns:
@@ -368,7 +374,7 @@ def fuse_four_imu_dataframe(
         df_out[f"{seg}_qy"] = quats[:, 2]
         df_out[f"{seg}_qz"] = quats[:, 3]
 
-    # Relative joint angles
+    # ── Relative joint angles ────────────────────────────────────────────────
     pairs = [
         ("theta_PL", "pelvis", "l3"),    # Pelvis → L3  (lumbar flexion)
         ("theta_LT", "l3",   "t12"),     # L3 → T12     (thoracolumbar junction)
@@ -394,7 +400,7 @@ def fuse_four_imu_dataframe(
         df_out[f"{angle_prefix}_roll"]  = rolls
         df_out[f"{angle_prefix}_yaw"]   = yaws
 
-    # L3 sagittal angular velocity (deg/s)
+    # ── L3 sagittal angular velocity (deg/s) ─────────────────────────────────
     # Derived from Pelvis→L3 pitch angle using central difference
     theta_PL_pitch = df_out["theta_PL_pitch"].to_numpy()
     dt             = 1.0 / fs
@@ -404,7 +410,9 @@ def fuse_four_imu_dataframe(
     return df_out
 
 
+# ─────────────────────────────────────────────────────────────────────────────
 # INITIALISATION FROM STATIC RECORDING
+# ─────────────────────────────────────────────────────────────────────────────
 
 def init_quaternion_from_accel(
     accel_mean_g: np.ndarray,
@@ -418,7 +426,7 @@ def init_quaternion_from_accel(
 
     Parameters
     ----------
-    accel_mean_g : (3,) array, mean accelerometer reading over a short still
+    accel_mean_g : (3,) array — mean accelerometer reading over a short still
                                 recording, in g  [ax, ay, az]
 
     Returns
@@ -431,7 +439,7 @@ def init_quaternion_from_accel(
         return np.array([1.0, 0.0, 0.0, 0.0])
     a = a / a_norm
 
-    # Target: world z-axis points down (0, 0, 1), same convention as Madgwick
+    # Target: world z-axis points down (0, 0, 1) — same convention as Madgwick
     # Rotation from a to [0, 0, 1]
     target = np.array([0.0, 0.0, 1.0])
     cross  = np.cross(a, target)
@@ -443,7 +451,7 @@ def init_quaternion_from_accel(
         if dot > 0:
             return np.array([1.0, 0.0, 0.0, 0.0])
         else:
-            # Anti-aligned: rotate 180° about any perpendicular axis
+            # Anti-aligned — rotate 180° about any perpendicular axis
             return np.array([0.0, 1.0, 0.0, 0.0])
 
     axis  = cross / cross_norm
@@ -454,14 +462,16 @@ def init_quaternion_from_accel(
     return quat_normalize(np.array([w, xyz[0], xyz[1], xyz[2]]))
 
 
+# ─────────────────────────────────────────────────────────────────────────────
 # QUICK SELF-TEST
+# ─────────────────────────────────────────────────────────────────────────────
 
 def _selftest() -> None:
     """
     Smoke-test the Madgwick filter.
 
     Scenario A (still convergence):
-        Sensor upright, gravity on +Z (az = 1g, standard mounting with
+        Sensor upright — gravity on +Z (az = 1g, standard mounting with
         sensor Z pointing downward). Feed 5 s of still data at 100 Hz.
         Expected: pitch, roll, yaw all converge to ~0° (identity orientation).
 
@@ -484,7 +494,7 @@ def _selftest() -> None:
     accel_still       += rng.normal(0, 0.01, accel_still.shape)
     gyro_still         = rng.normal(0, 0.5, (n_still, 3))  # noise only
 
-    # Scenario B: forward flexion, gy = +20 dps (rotation about sensor Y)
+    # Scenario B: forward flexion — gy = +20 dps (rotation about sensor Y)
     # Gravity stays approximately on Z during a slow forward lean.
     accel_flex        = np.zeros((n_flex, 3))
     accel_flex[:, 2]  = 1.0

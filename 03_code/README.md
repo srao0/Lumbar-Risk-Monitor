@@ -10,7 +10,7 @@ signal_processing/     Feature extraction (shared by synthetic and real data)
   emg/                 Band-pass / notch filtering, time-domain EMG features
   pipeline.py          Windowing, feature extraction, baseline z-scores -> feature_matrix.csv
 ml/
-  training/            train_classifier.py — LOSO cross-validation, RF / LR / SVM,
+  training/            train_classifier.py: LOSO cross-validation, RF / LR / SVM,
                        three conditions (IMU-only, EMG-only, IMU+EMG)
   evaluation/          Metrics, plots
   fuzzy/               Mamdani fuzzy inference layer that turns model output into a risk level
@@ -39,14 +39,14 @@ python scripts/phase_runners/run_phase1_synthetic.py        # Phase I: validates
 
 The other phases operate on recorded participant sessions:
 
-- `run_phase2_protocol.py` — full hybrid (IMU + sEMG) protocol evaluation
-- `run_phase2_fallback_protocol.py` — IMU-only fallback route (the cohort's actual mode)
-- `run_personalised_stage2b.py` — personalised vs population models (Phase II.B)
-- `run_phase2_varied_test.py` — held-out varied-movement evaluation (Phase II.C)
-- `demo_risk_monitor.py` — replay-mode traffic-light demo with explanations (Phase III)
+- `run_phase2_protocol.py`: full hybrid (IMU + sEMG) protocol evaluation
+- `run_phase2_fallback_protocol.py`: IMU-only fallback route (the cohort's actual mode)
+- `run_personalised_stage2b.py`: personalised vs population models (Phase II.B)
+- `run_phase2_varied_test.py`: held-out varied-movement evaluation (Phase II.C)
+- `demo_risk_monitor.py`: replay-mode traffic-light demo with explanations (Phase III)
 
 The headline fallback evidence is produced by `prepare_fallback_analysis_sets.py` → `train_fallback_analysis_models.py` → `evaluate_fallback_analysis_sets.py`; the exact sequence is documented in `REPRODUCE.md` (this folder).
 
 ## Notes
 
-`train_classifier.py` carries a feature-availability check: if a feature column expected by a model is absent from the input matrix, it raises immediately rather than silently training on a smaller feature set. IMU features are always required; EMG features are required only when not on the IMU-only fallback route.
+`train_classifier.py` carries a feature-availability check: if a feature column expected by a model is absent from the input matrix, it raises immediately rather than silently training on a smaller feature set. IMU features are always required; EMG features are required only when the run is not on the IMU-only fallback route.

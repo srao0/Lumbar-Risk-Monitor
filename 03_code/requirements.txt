@@ -1,4 +1,4 @@
-# Spinal Movement Risk Monitor — FYP 2025/26
+# Spinal Movement Risk Monitor
 # Install: py -m pip install -r requirements.txt
 
 # Data acquisition
